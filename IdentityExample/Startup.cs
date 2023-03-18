@@ -24,16 +24,21 @@ namespace IdentityExample
                 config.UseInMemoryDatabase("Memory");
             });
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>(config =>
+            {
+                config.Password.RequiredLength = 4;
+                config.Password.RequireDigit = false;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequireUppercase = false;
+            })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            //services.AddAuthentication("CookieAuth")
-            //    .AddCookie("CookieAuth", config =>
-            //    {
-            //        config.Cookie.Name = "Grandmas.Cookie";
-            //        config.LoginPath = "/Home/Authenticate";
-            //    });
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Cookie.Name = "Identity.Cookie";
+                config.LoginPath = "/Home/Login";
+            });
 
             services.AddControllersWithViews();
         }
